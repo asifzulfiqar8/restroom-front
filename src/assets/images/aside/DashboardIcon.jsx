@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable react/prop-types */
+
 
 const DashboardIcon = ({ activeLink }) => {
   const fillColor = activeLink ? "#A449EB" : "#fff"; // Purple when active, white otherwise

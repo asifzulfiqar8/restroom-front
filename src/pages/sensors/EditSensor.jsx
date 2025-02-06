@@ -1,9 +1,12 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Input from "../../components/shared/input/Input";
 import Button from "../../components/shared/button/Button";
+import { useUpdateSingleSensorMutation } from "../../services/sensor/sensorApi";
 
 const EditSensor = ({ selectedSensor, onClose, refetch }) => {
+  const [updateSensor] = useUpdateSingleSensorMutation();
   const [editSensor, setEditSensor] = useState({
     sensorName: "",
     type: "",
@@ -17,13 +20,13 @@ const EditSensor = ({ selectedSensor, onClose, refetch }) => {
   useEffect(() => {
     if (selectedSensor) {
       setEditSensor({
-        sensorName: selectedSensor.sensorName || "",
-        type: selectedSensor.type || "",
-        ip: selectedSensor.ip || "",
-        uniqueId: selectedSensor.uniqueId || "",
-        port: selectedSensor.port || "",
-        location: selectedSensor.location || "",
-        url: selectedSensor.url || "",
+        sensorName: selectedSensor?.name || "",
+        type: selectedSensor?.type || "",
+        ip: selectedSensor?.ip || "",
+        uniqueId: selectedSensor?.uniqueId || "",
+        port: selectedSensor?.port || "",
+        location: selectedSensor?.location || "",
+        url: selectedSensor?.url || "",
       });
     }
   }, [selectedSensor]);
@@ -36,19 +39,30 @@ const EditSensor = ({ selectedSensor, onClose, refetch }) => {
     }));
   };
 
+  console.log("sensor", editSensor);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await updateSensor(selectedSensor._id, editSensor);
+      const res = await updateSensor(selectedSensor._id, {
+        name: editSensor.sensorName,
+        type: editSensor.type,
+        ip: editSensor.ip,
+        uniqueId: editSensor.uniqueId,
+        port: editSensor.port,
+        url: editSensor.url,
+      });
       toast.success(res?.message || " Sensor updates successfully");
-      refetch();
+      // refetch();
       onClose();
     } catch (error) {
       console.error("Failed to update sensor:", error);
       toast.error(error?.data?.message || "An error occurred while Updating.");
     }
   };
+
+  // console.log("sensor", selectedSensor);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -111,17 +125,6 @@ const EditSensor = ({ selectedSensor, onClose, refetch }) => {
               name="url"
               onChange={handleChange}
               value={editSensor.url}
-              required
-            />
-          </div>
-          <div className="flex flex-col w-[100%] ">
-            <Input
-              label="Location"
-              type="text"
-              placeholder="location"
-              name="location"
-              onChange={handleChange}
-              value={editSensor.location}
               required
             />
           </div>

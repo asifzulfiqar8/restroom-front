@@ -1,67 +1,35 @@
+import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
-import { useState } from "react";
-import { IoEye } from "react-icons/io5";
-import { RiEditBoxFill } from "react-icons/ri";
-import { RiDeleteBin6Fill } from "react-icons/ri";
-import Modal from "../../components/modals/Modal";
-import AddSensor from "./AddSensor";
 import { FiPlus } from "react-icons/fi";
-import EditSensor from "./EditSensor";
+import { IoEye } from "react-icons/io5";
+import { RiDeleteBin6Fill, RiEditBoxFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import DeleteConfirmation from "../../components/modals/DeleteConfirmation";
-import { toast } from "react-toastify";
-
-// Static sensor data
-const sensorData = [
-  {
-    id: 1,
-    sensorName: "Temperature Sensor",
-    ip: "192.168.1.10",
-    port: "8080",
-    type: "Temperature",
-    uniqueId: "T-12345",
-    status: "active",
-  },
-  {
-    id: 2,
-    sensorName: "Humidity Sensor",
-    ip: "192.168.1.11",
-    port: "8081",
-    type: "Humidity",
-    uniqueId: "H-54321",
-    status: "inactive",
-  },
-  {
-    id: 3,
-    sensorName: "Pressure Sensor",
-    ip: "192.168.1.12",
-    port: "8082",
-    type: "Pressure",
-    uniqueId: "P-67890",
-    status: "active",
-  },
-];
+import Modal from "../../components/modals/Modal";
+import { useGetAllSensorsQuery } from "../../services/sensor/sensorApi";
+import AddSensor from "./AddSensor";
+import EditSensor from "./EditSensor";
 
 const columns = (modalOpenHandler, handleStatusToggle) => [
   {
     name: "Sensor Name",
-    selector: (row) => row.sensorName,
+    selector: (row) => row?.name,
   },
   {
     name: "IP",
-    selector: (row) => row.ip,
+    selector: (row) => row?.ip,
   },
   {
     name: "Port",
-    selector: (row) => row.port,
+    selector: (row) => row?.port,
   },
   {
     name: "Type",
-    selector: (row) => row.type,
+    selector: (row) => row?.type,
   },
   {
     name: "Unique Id",
-    selector: (row) => row.uniqueId,
+    selector: (row) => row?.uniqueId,
   },
   {
     name: "Status",
@@ -69,7 +37,7 @@ const columns = (modalOpenHandler, handleStatusToggle) => [
       <label className="inline-flex items-center cursor-pointer">
         <input
           type="checkbox"
-          checked={row.status === "active"}
+          checked={row?.status === "active"}
           onChange={() => handleStatusToggle(row)}
           className="sr-only peer"
         />
@@ -81,7 +49,7 @@ const columns = (modalOpenHandler, handleStatusToggle) => [
     name: "Action",
     selector: (row) => (
       <div className="flex items-center gap-3">
-        <Link to={`/home/view-sensor`}>
+        <Link to={`/view-sensor`}>
           <div className="cursor-pointer">
             <IoEye fontSize={23} />
           </div>
@@ -105,19 +73,12 @@ const columns = (modalOpenHandler, handleStatusToggle) => [
 ];
 
 const Sensors = () => {
+  const { data, isLoading, refetch } = useGetAllSensorsQuery();
   const [modal, setModal] = useState(null);
-  const [sensors, setSensors] = useState(sensorData); // Use static data
+  const [sensors, setSensors] = useState([]);
   const [selectedSensor, setSelectedSensor] = useState(null);
 
-  const handleStatusToggle = (sensor) => {
-    const updatedSensors = sensors.map((s) =>
-      s.id === sensor.id
-        ? { ...s, status: s.status === "active" ? "inactive" : "active" }
-        : s
-    );
-    setSensors(updatedSensors);
-    toast.success("Sensor status updated");
-  };
+  const handleStatusToggle = (sensor) => {};
 
   const modalOpenHandler = (type, sensor) => {
     setModal(type);
@@ -129,6 +90,10 @@ const Sensors = () => {
     setSelectedSensor(null);
   };
 
+  useEffect(() => {
+    let sensorsData = data?.data;
+    if (sensorsData?.length) setSensors(sensorsData);
+  }, [data]);
   return (
     <div className="parentContainer animate-slide-up">
       <div className="piechart p-4 rounded-[15px] lg:p-6 h-[calc(100vh-80px)] overflow-hidden">
@@ -159,6 +124,7 @@ const Sensors = () => {
           <Modal title="Add Sensor" onClose={modalCloseHandler}>
             <AddSensor
               onClose={modalCloseHandler}
+              refetch={refetch}
               onAdd={(newSensor) => setSensors([...sensors, newSensor])}
             />
           </Modal>
@@ -168,6 +134,7 @@ const Sensors = () => {
             <EditSensor
               selectedSensor={selectedSensor}
               onClose={modalCloseHandler}
+              refetch={refetch}
               onEdit={(updatedSensor) =>
                 setSensors(
                   sensors.map((s) =>
@@ -183,6 +150,7 @@ const Sensors = () => {
             <DeleteConfirmation
               selectedSensor={selectedSensor}
               onClose={modalCloseHandler}
+              refetch={refetch}
               message="Are you sure you want to delete this sensor?"
               onDelete={() => {
                 setSensors(sensors.filter((s) => s.id !== selectedSensor.id));

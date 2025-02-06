@@ -1,12 +1,19 @@
-import BuildingIcon from "../../../../assets/images/aside/DashboardIcon";
+import BuildingIcon from "../../../../assets/images/aside/BuildingIcon";
+import DashboardIcon from "../../../../assets/images/aside/DashboardIcon";
 import SettingIcon from "../../../../assets/images/aside/SettingIcon";
 
 export const pages = [
   {
     title: "Dashboard",
-    icon: <BuildingIcon />,
+    icon: <DashboardIcon />,
 
     link: "/admin/dashboard",
+  },
+  {
+    title: "Buildings",
+    icon: <BuildingIcon />,
+
+    link: "/admin/buildings",
   },
 
   // {

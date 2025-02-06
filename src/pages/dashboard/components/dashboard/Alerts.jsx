@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Alert from "../../../../../public/assets/images/dashboard/Alert";
 import Modal from "../../../../components/modals/Modal";
 
@@ -32,9 +32,9 @@ const Alerts = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-1">
           <Alert />
-          <h2 className="text-[20px] leading-[30px] font-[500]">Alerts</h2>
+          <h2 className="text-sm md:text-lg leading-[30px] font-[500]">Alerts</h2>
         </div>
-        <button onClick={() => handleModalOpen()} className="text-[#A449EB]">
+        <button onClick={() => handleModalOpen()} className="text-[#A449EB] text-xs">
           See all
         </button>
       </div>
@@ -50,7 +50,7 @@ const Alerts = () => {
               key={i}
               className="bg-[#FFECEC] text-[#F42F2F] rounded-[6px] p-[15px] flex gap-2 items-center mb-3 border-l-4 border-[#F42F2F]"
             >
-              <p>{alert}</p>
+              <p className="text-sm md:text-base">{alert}</p>
             </div>
           ))}
         </>

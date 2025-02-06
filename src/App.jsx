@@ -1,9 +1,10 @@
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, Link } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "./components/shared/Loader.jsx";
 import { useGetMyProfileQuery } from "./services/auth/authApi.js";
 import { userExist, userNotExist } from "./services/auth/authSlice.js";
+import Button from "./components/shared/button/Button.jsx";
 
 // Lazy-loaded components
 const AllRestRooms = lazy(() =>
@@ -64,6 +65,10 @@ const AdminProfile = lazy(() =>
 const AdminChangePassword = lazy(() =>
   import("./pages/admin/settings/components/ChangePassword.jsx")
 );
+const AdminBuildings = lazy(() =>
+  import("./pages/admin/buildings/Buildings.jsx")
+);
+
 const AddBuildingStepper = lazy(() =>
   import("./pages/buildings/addBuildingStepper/AddBuildingStepper.jsx")
 );
@@ -94,13 +99,20 @@ const App = () => {
           }
         />
         <Route path="/register" element={<Register />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Main application routes */}
         <Route
           path="/"
           element={
             <ProtectedRoute user={user} redirect="/login">
-              <Home />
+              {user?.role === "admin" ? (
+                <Navigate replace to="/admin" />
+              ) : user?.role === "inspectionist" ? (
+                <Navigate replace to="/inspection" />
+              ) : (
+                <Home />
+              )}
             </ProtectedRoute>
           }
         >
@@ -109,7 +121,7 @@ const App = () => {
           <Route path="building-floor" element={<BuildingFloors />} />
           <Route path="update-building/:id" element={<EditBuilding />} />
           <Route path="floor/:buildingId/:floorId" element={<Floor />} />
-          <Route path="building" element={<Buildings />} />
+          <Route path="buildings" element={<Buildings />} />
           <Route path="add-building" element={<AddBuildingStepper />} />
           <Route path="sensor" element={<Sensors />} />
           <Route path="view-sensor" element={<ViewSensor />} />
@@ -124,7 +136,15 @@ const App = () => {
           <Route path="reports" element={<Reports />} />
         </Route>
 
-        <Route path="/inspection" element={<InspectionHome />}>
+        {/* Inspectionist Routes */}
+        <Route
+          path="/inspection"
+          element={
+            <ProtectedRoute user={user} role="inspectionist" redirect="/login">
+              <InspectionHome />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate replace to="dashboard" />} />
           <Route path="dashboard" element={<InspectionDashboard />} />
           <Route path="history" element={<InspectorReporting />} />
@@ -137,11 +157,20 @@ const App = () => {
           />
         </Route>
 
-        <Route path="/admin" element={<Admin />}>
+        {/* Admin Routes */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute user={user} role="admin" redirect="/login">
+              <Admin />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate replace to="dashboard" />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="profile" element={<AdminProfile />} />
           <Route path="change-password" element={<AdminChangePassword />} />
+          <Route path="buildings" element={<AdminBuildings />} />
         </Route>
 
         {/* Redirect all other routes to / */}
@@ -152,3 +181,16 @@ const App = () => {
 };
 
 export default App;
+
+const Unauthorized = () => {
+  return (
+    <section className="container mx-auto py-10 px-6">
+      <h1 className="text-3xl font-semibold">Access Denied: Unauthorized</h1>
+      <div className="mt-5">
+        <Link to="/">
+          <Button text="Go to home page" />
+        </Link>
+      </div>
+    </section>
+  );
+};

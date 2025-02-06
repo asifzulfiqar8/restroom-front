@@ -6,7 +6,7 @@ const TopBuilding = () => {
     <div className="bg-white rounded-2xl shadow-md border-[1px] p-5 h-full">
       <div className="flex gap-1 items-center">
         <Building />
-        <h2 className="text-[20px] leading-[30px] font-[500] ">
+        <h2 className="text-base md:text-lg leading-[30px] font-[500] ">
           Top Buildings
         </h2>
       </div>

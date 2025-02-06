@@ -14,7 +14,7 @@ const waterSensorStatus = [
   { title: "Water Flow", count: "3 In & 2 Out" },
 ];
 
-const ToiletStatus = () => {
+const ToiletStatus = ({data}) => {
   const id = useParams();
   const url = "https://restroom-frontend.vercel.app/home/floor";
   const options = ["Toilet Sensor", "Water Sensor"];
@@ -50,8 +50,10 @@ const ToiletStatus = () => {
                   <img src={qr} alt="QR Code" />
                 </div>
               </div>
-              <Link to="/home/view-sensor">
+              <Link to="/view-sensor">
                 <div className="pointer">
+
+                  {/* NOTE : THE data i have passing in prop ,is not valid, this is behaving like static..so fix it */}
                   <img src={data?.data?.floorRoomImage} alt="Toilet Sensor" />
                 </div>
               </Link>

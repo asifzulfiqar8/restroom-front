@@ -1,43 +1,96 @@
-import { useEffect, useState } from "react";
-import profileImage from "../../../../assets/profile.svg";
+import { useEffect, useRef, useState } from "react";
 // import { useCreateUserProfileMutation, useGetUserProfileQuery, useGetUserQuery } from "../../../redux/api/userApi";
-import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
-import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Button from "../../../../components/shared/button/Button";
 import Input from "../../../../components/shared/input/Input";
-import Modal from "../../../../components/modals/Modal";
-import Dropdown from "../../../../components/shared/dropdown/Dropdown";
+import {
+  useGetMyProfileQuery,
+  useUpdateMyProfileMutation,
+} from "../../../../services/auth/authApi";
+import { userExist, userNotExist } from "../../../../services/auth/authSlice";
 
 const Profile = () => {
-  const [open, setOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState({});
-  const [profilePic, setProfilePic] = useState("");
-  const [file, setFile] = useState(null);
+  const imageRef = useRef(null);
+  const [userProfile, setUserProfile] = useState({
+    image: "",
+    profileImg: "",
+    email: "",
+    fullName: "",
+    phoneNumber: "",
+    dob: "",
+    nationality: "",
+    gender: "",
+  });
+  const [updateProfile, { isLoading }] = useUpdateMyProfileMutation();
+  const { data, error, refetch } = useGetMyProfileQuery();
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const [isFormEdit, setIsFormEdit] = useState(false);
 
-  const {
-    profileImage,
-    fullName,
-    email,
-    phoneNumber,
-    dob,
-    nationality,
-    gender,
-  } = userProfile || {};
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setUserProfile({
+        ...userProfile,
+        image: file,
+        profileImg: reader.result,
+      });
+    };
+  };
 
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const previewUrl = URL.createObjectURL(selectedFile);
-      setProfilePic(previewUrl);
-      setFile(selectedFile);
+  const userProfileChangeHandler = (e) =>
+    setUserProfile({ ...userProfile, [e.target.name]: e.target.value });
+
+  const updateProfileSaveHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("fullName", userProfile?.fullName);
+    formData.append("email", userProfile?.email);
+    formData.append("phoneNumber", userProfile?.phoneNumber);
+    formData.append("dob", userProfile?.dob);
+    formData.append("nationality", userProfile?.nationality);
+    formData.append("gender", userProfile?.gender);
+
+    if (userProfile?.image) {
+      formData.append("file", userProfile.image);
+    }
+
+    try {
+      const res = await updateProfile(formData).unwrap();
+      if (res?.success) {
+        toast.success(res?.message);
+        setIsFormEdit(false);
+        await refetch();
+      }
+    } catch (error) {
+      toast.error(
+        error?.data?.message || "Error occurred while updating profile"
+      );
+      console.log("Error while updating profile", error);
     }
   };
+
+  // useEffect(() => {
+  //   if (data && data?.data) dispatch(userExist(data?.data));
+  //   if (error) dispatch(userNotExist());
+  // }, [data, dispatch, error]);
+
+  useEffect(() => {
+    if (user) {
+      setUserProfile({
+        profileImg: user?.image?.url || "",
+        fullName: user?.fullName || "",
+        email: user?.email || "",
+        phoneNumber: user?.phoneNumber || "",
+        dob: user?.dob || "",
+        nationality: user?.nationality || "",
+        gender: user?.gender || "",
+      });
+    }
+  }, [user]);
 
   return (
     <>
@@ -50,24 +103,41 @@ const Profile = () => {
       >
         <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-6 w-full">
           <img
-            src={profileImage}
+            onClick={() => imageRef.current.click()}
+            src={userProfile?.profileImg}
             alt="Profile"
-            className="cursor-pointer w-24 h-24 object-cover rounded-full"
-            // onClick={() => document.getElementById("fileInput").click()}
+            className={`w-24 h-24 object-cover rounded-full ${
+              !isFormEdit ? "" : "cursor-pointer"
+            }`}
           />
           <div className="text-center lg:text-left">
-            <h3 className="text-lg font-semibold">{fullName || "User Name"}</h3>
-            <p className="text-[18px] py-2">{email || "User Email"}</p>
+            <input
+              className={`${
+                !isFormEdit
+                  ? "bg-transparent border-0 px-0"
+                  : "border-[1px] border-[#54545499] rounded-md px-5 py-2 text-[#414141] leading-tight focus:outline-none focus:shadow-outline pr-[2.5rem]"
+              }`}
+              name="fullName"
+              placeholder="Phone number"
+              value={userProfile?.fullName}
+              readOnly={!isFormEdit}
+              disabled={!isFormEdit}
+              onChange={(e) => userProfileChangeHandler(e)}
+            />
+            <p className="text-[18px] py-2">{userProfile?.email}</p>
           </div>
         </div>
       </div>
 
       <input
+        ref={isFormEdit ? imageRef : null}
         type="file"
         id="fileInput"
         onChange={handleFileChange}
-        style={{ display: "none" }}
         accept="image/*"
+        readOnly={!isFormEdit}
+        disabled={!isFormEdit}
+        className="hidden"
       />
 
       <div
@@ -79,17 +149,22 @@ const Profile = () => {
       >
         <div className="grid grid-cols-1 gap-4 w-full">
           <Input
-            type="text"
-            readOnly
+            type="tel"
+            name="phoneNumber"
             placeholder="Phone number"
-            value={phoneNumber || ""}
+            value={userProfile?.phoneNumber}
+            readOnly={!isFormEdit}
+            disabled={!isFormEdit}
+            onChange={(e) => userProfileChangeHandler(e)}
           />
           <Input
             type="text"
             placeholder="Date of Birth"
             name="dob"
-            value={dob ? moment(dob).format("YYYY-MM-DD") : ""}
-            readOnly
+            value={userProfile?.dob}
+            readOnly={!isFormEdit}
+            disabled={!isFormEdit}
+            onChange={(e) => userProfileChangeHandler(e)}
           />
         </div>
       </div>
@@ -104,142 +179,42 @@ const Profile = () => {
         <div className="grid grid-cols-1 gap-4 w-full">
           <Input
             type="text"
-            readOnly
             placeholder="Nationality"
-            value={nationality || ""}
+            name="nationality"
+            value={userProfile?.nationality}
+            readOnly={!isFormEdit}
+            disabled={!isFormEdit}
+            onChange={(e) => userProfileChangeHandler(e)}
           />
           <Input
             type="text"
-            readOnly
+            name="gender"
             placeholder="Gender"
-            value={gender || ""}
+            value={userProfile?.gender}
+            readOnly={!isFormEdit}
+            disabled={!isFormEdit}
+            onChange={(e) => userProfileChangeHandler(e)}
           />
         </div>
       </div>
 
       <div className="flex justify-center lg:justify-end w-full mt-5">
-        <Button text="edit" onClick={() => setOpen(true)} />
+        {!isFormEdit ? (
+          <Button text="edit" onClick={() => setIsFormEdit(true)} />
+        ) : (
+          <div className="flex items-center gap-4">
+            <Button text="Cancel" onClick={() => setIsFormEdit(false)} />
+            <Button
+              text={isLoading ? "Saving..." : "Save"}
+              disabled={isLoading}
+              readOnly={isLoading}
+              onClick={updateProfileSaveHandler}
+            />
+          </div>
+        )}
       </div>
-      {open && (
-        <Modal
-          onClose={() => setOpen(false)}
-          title="Edit Profile"
-          width="w-[320px] md:w-[450px]"
-        >
-          <EditModal />
-        </Modal>
-      )}
     </>
   );
 };
 
 export default Profile;
-
-const EditModal = () => {
-  const [userProfile, setUserProfile] = useState({});
-  const [profilePic, setProfilePic] = useState("");
-  const [file, setFile] = useState(null);
-  const [open, setOpen] = useState(false);
-
-  const getUserProfile = async () => {
-    try {
-      const profileData = await fetchUserProfile();
-      if (profileData) {
-        setUserProfile(profileData);
-        if (profileData.profilePic) {
-          setProfilePic(profileData.profilePic);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      toast.error("Failed to load user profile.");
-    }
-  };
-
-  useEffect(() => {
-    getUserProfile();
-  }, []);
-  const {
-    profileImage,
-    fullName,
-    email,
-    phoneNumber,
-    dob,
-    nationality,
-    gender,
-  } = userProfile || {};
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-    if (file) {
-      formData.append("profilePic", file);
-    }
-
-    formData.append("phoneNumber", phoneNumber);
-    formData.append("dob", dob);
-    formData.append("gender", gender);
-    formData.append("nationality", nationality);
-
-    try {
-      const updatedProfile = await editUserProfile(formData);
-      if (updatedProfile) {
-        toast.success("Profile updated successfully!");
-        setUserProfile(updatedProfile);
-        getUserProfile();
-        setOpen(false);
-      } else {
-        throw new Error("Failed to update profile.");
-      }
-    } catch (error) {
-      console.error("Error updating user profile:", error);
-      toast.error("Failed to update user profile.");
-    }
-  };
-  return (
-    <div>
-      <div className="sm:flex sm:items-start">
-        <div className="w-full">
-          <form className="flex flex-col gap-2 w-full" onSubmit={handleSubmit}>
-            <div className="mx-auto">
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="cursor-pointer w-24 h-24 object-cover  rounded-full"
-                onClick={() => document.getElementById("fileInput").click()}
-              />
-            </div>
-            <Input
-              type="number"
-              placeholder="Enter phone number"
-              name="phoneNumber"
-              defaultValue={phoneNumber || ""}
-            />
-            <Input
-              type="date"
-              name="dob"
-              defaultValue={dob ? moment(dob).format("YYYY-MM-DD") : ""}
-            />
-            <div className="grid grid-cols-1 gap-4 w-full">
-              <Dropdown
-                name="gender"
-                defaultValue={gender || ""}
-                options={[{ option: "male" }, { option: "Female" }]}
-              />
-
-              <Input
-                type="text"
-                placeholder="Nationality"
-                name="nationality"
-                defaultValue={nationality || ""}
-              />
-            </div>
-          </form>
-        </div>
-      </div>
-      <div className="mt-4">
-        <Button text="update" width="w-full" />
-      </div>
-    </div>
-  );
-};

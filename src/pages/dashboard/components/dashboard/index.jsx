@@ -1,7 +1,6 @@
 import Alerts from "./Alerts";
 import OverallPerformance from "./OverallPerformance";
 import TopBuilding from "./TopBuilding";
-import AllBuildings from "./AllBuildings";
 import Map from "./Map";
 import { Link } from "react-router-dom";
 import { buildingCardData } from "../../../../data/data";
@@ -29,16 +28,16 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 mt-4">
         <div className="bg-white rounded-2xl shadow-md border-[1px] p-5">
           <div className="mb-4 flex justify-between items-center">
-            <h4 className="text-[20px] font-[600] leading-[32px]">
+            <h4 className="text-base md:text-lg font-[600] leading-[32px]">
               All Buildings
             </h4>
-            <Link to="/home/building">
+            <Link to="/buildings">
               <button className="text-[#A449EB]">See All</button>
             </Link>
           </div>
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 ">
             {buildingCardData.map((id, building) => (
-              <Link to={`/home/building-floor`} key={id}>
+              <Link to={`/building-floor`} key={id}>
                 <BuildingCard data={building} />
               </Link>
             ))}

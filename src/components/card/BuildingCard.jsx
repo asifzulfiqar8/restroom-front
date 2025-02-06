@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
+import { IoLocationSharp } from "react-icons/io5";
 import Image from "../../assets/card1.png";
 import Button from "../shared/button/Button";
 
-const BuildingCard = ({ data, buildingType = "public" }) => {
+const BuildingCard = ({  buildingType = "public" }) => {
   // const {
   // buildingLocation = "Technology Park"
   // buildingName = "Arfa Heights"
@@ -25,18 +26,27 @@ const BuildingCard = ({ data, buildingType = "public" }) => {
   };
 
   return (
-    <div className="bg-[#F7F7F7] rounded-xl overflow-hidden">
-      <img
-        className="w-full h-[200px] object-cover"
-        src={Image}
-        alt="Building"
-      />
-      <div className="p-4 md:p-6">
+    <div className=" rounded-[20px] overflow-hidden">
+      <div>
+        <img
+          className="w-full h-[200px] object-cover"
+          src={Image}
+          alt="Building"
+        />
+      </div>
+      <div className="p-4 md:p-6 rounded-b-[20px]  rounded-t-[30px] relative top-[-25px] bg-[#F7F7F7]">
         {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> */}
-        <div className="flex justify-between w-full items-center ">
+        <div className="flex justify-between w-full items-center flex-wrap">
           <div className="text-center sm:text-left">
-            <p className="text-xs sm:text-base text-gray-700">Location</p>
-            <h2 className="text-xl mt-1 font-[500]">Building Name</h2>
+            <div className="flex items-center gap-1">
+              <IoLocationSharp />
+              <p className="text-xs sm:text-base text-[#111111] font-[400]">
+                Location
+              </p>
+            </div>
+            <h2 className="text-sm sm:text-xl mt-1 text-[#111111] font-[500]">
+              Building Name
+            </h2>
           </div>
 
           <div
@@ -48,25 +58,27 @@ const BuildingCard = ({ data, buildingType = "public" }) => {
                 : buildingType === "commercial"
                 ? "bg-yellow-800"
                 : ""
-            }  w-fit px-4 py-2 capitalize text-white text-sm font-bold rounded-md`}
+            }  w-fit px-4 py-2 capitalize text-white text-sm font-bold rounded-[11px]`}
           >
             {buildingType}
           </div>
         </div>
         {/* </div> */}
 
-        <div className="grid grid-cols-2 gap-4 mt-4">
-          <div className="box p-2 flex flex-col items-center bg-[#E8E2FF] rounded-md">
-            <p className="text-sm sm:text-xl font-semibold text-gray-900 text-primary">
-              4
+        <div className="grid gid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <div className="box p-2 flex flex-col gap-2 items-center bg-[#E8E2FF] rounded-[7px]">
+            <p className="text-lg md:text-2xl font-semibold  text-primary">4</p>
+            <p className="text-xs md:text-sm text-[#11111199]">
+              Number Of Floors
             </p>
-            <p className="text-xs sm:text-sm">Number Of Floors</p>
           </div>
-          <div className="box p-2 flex flex-col items-center bg-[#E8E2FF] rounded-md">
-            <p className="text-sm sm:text-xl font-semibold text-gray-900 text-primary">
+          <div className="box p-2 flex flex-col gap-2 items-center bg-[#E8E2FF] rounded-[7px]">
+            <p className="text-lg md:text-2xl font-semibold  text-primary">
               14
             </p>
-            <p className="text-xs sm:text-sm">Number Of Restrooms</p>
+            <p className="text-xs md:text-sm text-[#11111199]">
+              Number Of Restrooms
+            </p>
           </div>
         </div>
       </div>

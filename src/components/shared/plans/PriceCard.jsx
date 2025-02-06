@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { GrCheckboxSelected } from "react-icons/gr";
 import Button from "../button/Button";
 
@@ -11,7 +12,7 @@ const PriceCard = ({ card, onSelectPlan }) => {
         {card.title}
       </h6>
       <p className="text-base md:text-xl text-black text-center font-semibold mt-1">
-        {card.price}
+        ${card.price}
         <span className="font-normal text-sm md:text-lg">/Month</span>
       </p>
       <div className="mt-6">

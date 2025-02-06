@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import signinImage from "../../assets/images/auth/signin.svg";
 import logo from "../../assets/images/auth/logo.svg";

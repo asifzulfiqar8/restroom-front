@@ -1,20 +1,26 @@
 // ==============INSPECTION HEADER
 
-import { FaChevronDown, FaRegBell } from "react-icons/fa";
-import profilePic from "../../../assets/images/header/profilePic.png";
+import { useRef, useState } from "react";
+import { FaRegBell } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
 import { IoIosArrowForward, IoIosLogOut } from "react-icons/io";
+import { Link, useNavigate } from "react-router-dom";
+import profilePic from "../../../assets/images/header/profilePic.png";
 import Notifications from "./Notifications";
+import authApi, { useLogoutMutation } from "../../../services/auth/authApi";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { userNotExist } from "../../../services/auth/authSlice";
 
 const Header = () => {
   const [profileActive, setProfileActive] = useState(false);
-
   const navigate = useNavigate();
-
   const [notificationActive, setNotificationActive] = useState(false);
   const notificationRef = useRef();
+  const [logout, { isLoading }] = useLogoutMutation();
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  console.log("user", user);
 
   const toggleDropDown = () => {
     setProfileActive(!profileActive);
@@ -23,6 +29,20 @@ const Header = () => {
   const handleNotification = () => {
     setNotificationActive(!notificationActive);
     setProfileActive(false);
+  };
+
+  const logoutHandler = async () => {
+    try {
+      const res = await logout().unwrap();
+      if (res?.success) {
+        dispatch(userNotExist());
+        dispatch(authApi.util.resetApiState()); // here reseting the cache of user..
+        toast.success(res?.message);
+        return navigate("/login");
+      }
+    } catch (error) {
+      toast.error(error);
+    }
   };
 
   return (
@@ -49,9 +69,9 @@ const Header = () => {
         </button>
         <div className="flex items-center gap-2 md:gap-4">
           <img
-            src={profilePic}
+            src={user?.image?.url || profilePic}
             alt="profile-pic"
-            className="w-[40px] h-[40px] rounded-sm object-cover hidden md:inline-block"
+            className="w-[40px] h-[40px] rounded-lg object-cover hidden md:inline-block cursor-pointer"
             onClick={toggleDropDown}
           />
           <div className="flex flex-col items-center">
@@ -71,13 +91,18 @@ const Header = () => {
         <div className="absolute top-[70px] right-3 bg-white shadow-md rounded-lg w-[150px] z-10 border">
           <Link
             className="flex items-center justify-between px-3 py-2 border-b"
-            to={"/home/setting"}
+            to={"/inspection/profile"}
             onClick={() => setProfileActive(false)}
           >
             Profile
             <IoIosArrowForward />
           </Link>
-          <div className="flex items-center justify-between px-3 py-2 cursor-pointer">
+          <div
+            className={`flex items-center justify-between px-3 cursor-pointer py-2 ${
+              isLoading ? "opacity-50 pointer-events-none cursor-none" : ""
+            }`}
+            onClick={logoutHandler}
+          >
             Logout
             <IoIosLogOut />
           </div>

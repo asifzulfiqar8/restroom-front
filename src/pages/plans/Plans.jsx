@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Button from "../../components/shared/button/Button";
+import { useState } from "react";
 import PricePlans from "../../components/shared/plans/PricePlans";
 import Review from "../../components/shared/plans/Review";
 
@@ -22,12 +21,12 @@ const Plans = () => {
               onClick={() => tabsHandler("price")}
               type="button"
               // text="Price Plans"
-              className={` ${
+              className={`rounded-md ${
                 isTabActive === "price"
-                  ? "bg-[#A449EB] p-3 rounded-md text-white font-bold"
-                  : "[#c1c1c126] font-bold p-3"
+                  ? "bg-[#A449EB] p-3  text-white font-bold"
+                  : "bg-[#c1c1c126] font-bold p-3 text-[#00000099]"
               }`}
-              color={isTabActive === "price" ? "#fff" : "#000"}
+              color={isTabActive === "price" ? "text-[#fff]" : "#00000070"}
             >
               Price Plans
             </button>
@@ -38,12 +37,12 @@ const Plans = () => {
               onClick={() => tabsHandler("review")}
               type="button"
               // text="Price Plans"
-              className={` ${
+              className={`rounded-md ${
                 isTabActive === "review"
-                  ? "bg-[#A449EB] p-3 rounded-md text-white font-bold"
-                  : "[#c1c1c126] font-bold p-3"
+                  ? "bg-[#A449EB] p-3  text-white font-bold"
+                  : "bg-[#c1c1c126] font-bold p-3 text-[#00000099]"
               }`}
-              color={isTabActive === "price" ? "#fff" : "#000"}
+              color={isTabActive === "review" ? "#fff" : "#00000090"}
             >
               Review
             </button>

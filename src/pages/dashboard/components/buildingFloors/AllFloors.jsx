@@ -8,7 +8,7 @@ import { Link, useParams } from "react-router-dom";
 const AllFloors = ({ data }) => {
   const id = useParams().id;
   return (
-    <div className="">
+
       <div>
         <div className="piechart p-5">
           <div className="grid grid-cols-12 gap-3">
@@ -83,10 +83,12 @@ const AllFloors = ({ data }) => {
 
             <div className="col-span-12 md:col-span-2 flex justify-center items-center">
               <Link
-                // to={`/home/floor/${id}/${data?._id}`}
+                to={`/floor/${id}/${data?._id}`}
+                // to={`/floor/1/3}`} /* this is static route, assign above commented route for dynamic data */ 
+
                 onClick={() => window.scrollTo(0, 0)}
               >
-                <button className="text-[#A449EB] text-[16px] w-fit leading-[21px] font-bold underline bg-[#EED8FF] p-3 rounded-[10px]">
+                <button className="text-[#A449EB] text-[14px] w-fit leading-[21px] font-[500] underline bg-[#EED8FF] p-3 rounded-[10px]">
                   View Details
                 </button>
               </Link>
@@ -95,7 +97,6 @@ const AllFloors = ({ data }) => {
           <hr className="my-[10px]" />
         </div>
       </div>
-    </div>
   );
 };
 

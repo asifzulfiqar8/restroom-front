@@ -1,5 +1,5 @@
-import DashboardIcon from "../../../assets/images/aside/BuildingIcon";
-import BuildingIcon from "../../../assets/images/aside/DashboardIcon";
+import DashboardIcon from "../../../assets/images/aside/DashboardIcon";
+import BuildingIcon from "../../../assets/images/aside/BuildingIcon";
 import SensorIcon from "../../../assets/images/aside/SensorIcon";
 import SettingIcon from "../../../assets/images/aside/SettingIcon";
 import PlanIcon from "../../../assets/images/aside/PlanIcon";
@@ -13,7 +13,7 @@ export const pages = [
   },
   {
     title: "Buildings",
-    link: "/building",
+    link: "/buildings",
     icon: <BuildingIcon />,
   },
 

@@ -1,7 +1,9 @@
 import { toast } from "react-toastify";
 import Button from "../shared/button/Button";
+import { useDeleteSingleSensorMutation } from "../../services/sensor/sensorApi";
 
 const DeleteConfirmation = ({ onClose, message, selectedSensor, refetch }) => {
+  const [deleteSensor] = useDeleteSingleSensorMutation();
   const handleDelete = async () => {
     if (!selectedSensor || !selectedSensor._id) {
       console.error("No sensor selected or sensor ID is undefined");
@@ -12,7 +14,6 @@ const DeleteConfirmation = ({ onClose, message, selectedSensor, refetch }) => {
       const res = await deleteSensor(selectedSensor._id);
       toast.success(res?.message || "Sensor deleted successfully!");
       refetch();
-
       onClose();
     } catch (error) {
       toast.error(error?.data?.message || "An error occurred while deleting.");

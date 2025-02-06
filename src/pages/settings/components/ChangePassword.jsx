@@ -37,7 +37,7 @@ const ChangePassword = () => {
   return (
     <div className="parentContainer min-h-screen">
       <div className="piechart p-4 md:p-5">
-        <h3 className="text-[24px] font-[500] mb-4 xl:mb-0">Change Password</h3>
+        <h3 className="text-lg md:text-xl font-[500] mb-4 xl:mb-0">Change Password</h3>
         <form className="bg-white rounded-[15px] mt-4 p-5 gap-4 border-[2px]" onSubmit={changePasswordHandler}>
           <div className="grid grid-cols-1 gap-3">
             <Input

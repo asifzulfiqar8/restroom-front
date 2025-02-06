@@ -6,7 +6,10 @@ import Button from "../../../components/shared/button/Button";
 import Input from "../../../components/shared/input/Input";
 import Dropdown from "../../../components/shared/dropdown/Dropdown";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetMyProfileQuery, useUpdateMyProfileMutation } from "../../../services/auth/authApi";
+import {
+  useGetMyProfileQuery,
+  useUpdateMyProfileMutation,
+} from "../../../services/auth/authApi";
 import { toast } from "react-toastify";
 import { userExist, userNotExist } from "../../../services/auth/authSlice";
 
@@ -70,10 +73,10 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    if (data && data?.data) dispatch(userExist(data?.data));
-    if (error) dispatch(userNotExist());
-  }, [data, dispatch, error]);
+  // useEffect(() => {
+  //   if (data && data?.data) dispatch(userExist(data?.data));
+  //   if (error) dispatch(userNotExist());
+  // }, [data, dispatch, error]);
 
   useEffect(() => {
     if (user) {
@@ -94,7 +97,8 @@ const Profile = () => {
       <div
         className="bg-white flex items-center justify-between flex-col lg:flex-row rounded-[15px] mt-4 p-4 border-[1px] border-[#00000025]"
         style={{
-          boxShadow: "-1px 1px 2px rgba(0, 0, 0, 0.1), 2px 1px 4px rgba(0, 0, 0, 0.1)",
+          boxShadow:
+            "-1px 1px 2px rgba(0, 0, 0, 0.1), 2px 1px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
         <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-6 w-full">
@@ -119,7 +123,10 @@ const Profile = () => {
 
       <div
         className="bg-white flex justify-between flex-col lg:flex-row items-start rounded-[15px] mt-4 p-4 gap-4 border-[1px] border-[#00000025]"
-        style={{ boxShadow: "-1px 1px 2px rgba(0, 0, 0, 0.1), 2px 1px 4px rgba(0, 0, 0, 0.1)" }}
+        style={{
+          boxShadow:
+            "-1px 1px 2px rgba(0, 0, 0, 0.1), 2px 1px 4px rgba(0, 0, 0, 0.1)",
+        }}
       >
         <div className="grid grid-cols-1 gap-4 w-full">
           <Input
@@ -128,16 +135,25 @@ const Profile = () => {
             readOnly={isNotEditAble}
             placeholder="Full Name"
             value={userProfile?.fullName}
-            onChange={(e) => setUserProfile({ ...userProfile, fullName: e.target.value })}
+            onChange={(e) =>
+              setUserProfile({ ...userProfile, fullName: e.target.value })
+            }
           />
-          <Input type="text" disabled readOnly placeholder="Email" value={userProfile?.email} />
+          <Input
+            type="text"
+            disabled
+            readOnly
+            placeholder="Email"
+            value={userProfile?.email}
+          />
         </div>
       </div>
 
       <div
         className="bg-white flex justify-between flex-col lg:flex-row items-start rounded-[15px] mt-4 p-4 gap-4 border-[1px] border-[#00000025]"
         style={{
-          boxShadow: "-1px 1px 2px rgba(0, 0, 0, 0.1), 2px 1px 4px rgba(0, 0, 0, 0.1)",
+          boxShadow:
+            "-1px 1px 2px rgba(0, 0, 0, 0.1), 2px 1px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
         <div className="grid grid-cols-1 gap-4 w-full">
@@ -147,7 +163,9 @@ const Profile = () => {
             readOnly={isNotEditAble}
             placeholder="Phone number"
             value={userProfile?.phoneNumber}
-            onChange={(e) => setUserProfile({ ...userProfile, phoneNumber: e.target.value })}
+            onChange={(e) =>
+              setUserProfile({ ...userProfile, phoneNumber: e.target.value })
+            }
           />
           <Input
             type="date"
@@ -155,7 +173,9 @@ const Profile = () => {
             readOnly={isNotEditAble}
             placeholder="Date of Birth"
             value={userProfile?.dob}
-            onChange={(e) => setUserProfile({ ...userProfile, dob: e.target.value })}
+            onChange={(e) =>
+              setUserProfile({ ...userProfile, dob: e.target.value })
+            }
           />
         </div>
       </div>
@@ -163,7 +183,8 @@ const Profile = () => {
       <div
         className="bg-white flex justify-between flex-col lg:flex-row items-start rounded-[15px] mt-4 p-4 gap-4 border-[1px] border-[#00000025]"
         style={{
-          boxShadow: "-1px 1px 2px rgba(0, 0, 0, 0.1), 2px 1px 4px rgba(0, 0, 0, 0.1)",
+          boxShadow:
+            "-1px 1px 2px rgba(0, 0, 0, 0.1), 2px 1px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
         <div className="grid grid-cols-1 gap-4 w-full">
@@ -173,7 +194,9 @@ const Profile = () => {
             disabled={isNotEditAble}
             placeholder="Nationality"
             value={userProfile?.nationality}
-            onChange={(e) => setUserProfile({ ...userProfile, nationality: e.target.value })}
+            onChange={(e) =>
+              setUserProfile({ ...userProfile, nationality: e.target.value })
+            }
           />
 
           <Dropdown
@@ -182,18 +205,33 @@ const Profile = () => {
             defaultText={userProfile?.gender}
             value={userProfile?.gender}
             options={genderOptions}
-            onChange={(e) => setUserProfile({ ...userProfile, gender: e.value })}
+            onChange={(e) =>
+              setUserProfile({ ...userProfile, gender: e.value })
+            }
           />
         </div>
       </div>
 
       <div className="flex justify-center lg:justify-end w-full mt-5">
         {isNotEditAble ? (
-          <Button onClick={() => setIsNotEdit(false)} text="Edit" width="md:w-[120px] w-full" />
+          <Button
+            onClick={() => setIsNotEdit(false)}
+            text="Edit"
+            width="md:w-[120px] w-full"
+          />
         ) : (
           <div className="flex gap-4">
-            <Button disabled={isLoading} onClick={updateProfileHandler} text="Save" width="md:w-[120px] w-full" />
-            <Button onClick={() => setIsNotEdit(true)} text="Cancel" width="md:w-[120px] w-full" />
+            <Button
+              onClick={() => setIsNotEdit(true)}
+              text="Cancel"
+              width="md:w-[120px] w-full"
+            />
+            <Button
+              disabled={isLoading}
+              onClick={updateProfileHandler}
+              text={isLoading ? "Saving..." : "Save"}
+              width="md:w-[120px] w-full"
+            />
           </div>
         )}
       </div>

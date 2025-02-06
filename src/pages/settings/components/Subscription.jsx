@@ -54,13 +54,11 @@ const Subscription = () => {
   return (
     <div className="parentContainer min-h-screen">
       <div className="piechart p-4 md:p-5">
-        <h3 className="text-[20px] font-[500] mb-4 xl:mb-0">My Profiles</h3>
-
         <div className="bg-white rounded-[15px] p-4 lg:p-6 h-[calc(100vh-80px)] overflow-hidden">
           <div className="flex items-center justify-between">
-            <div>
-              <h3>Subscription History</h3>
-            </div>
+            <h3 className="text-lg md:text-xl font-[500]">
+              Subscription History
+            </h3>
           </div>
           <div className="mt-5">
             <DataTable

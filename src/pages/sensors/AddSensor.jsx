@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import Input from "../../components/shared/input/Input";
 import Button from "../../components/shared/button/Button";
+import { useAddNewSensorMutation } from "../../services/sensor/sensorApi";
 
-const AddSensor = ({ onClose, onAdd }) => {
-  const [addsensorData, setAddSensorData] = useState({
+const AddSensor = ({ onClose, refetch }) => {
+  const [addSensor, { isLoading }] = useAddNewSensorMutation();
+  const [addSensorData, setAddSensorData] = useState({
     sensorName: "",
     type: "",
     ip: "",
@@ -17,18 +19,23 @@ const AddSensor = ({ onClose, onAdd }) => {
 
   const handleSensorChange = (e) => {
     const { name, value } = e.target;
-    setAddSensorData({ ...addsensorData, [name]: value });
+    setAddSensorData({ ...addSensorData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await addSensor(addsensorData);
+      const { sensorName, type, ip, uniqueId, port, url } = addSensorData;
+      if (!sensorName || !type || !ip || !uniqueId || !port || !url)
+        toast.error("Please provide all fields");
+      const data = { name: sensorName, type, uniqueId, ip, port, url };
+      const response = await addSensor(data).unwrap();
       toast.success(response?.message);
-      onAdd();
+      await refetch();
+      onClose();
     } catch (error) {
-      const errorMsg = error.message || "An error occurred during Add Sensor.";
-      toast.error(errorMsg);
+      console.log("Error response:", error);
+      toast.error(error?.data?.message || "Error Occurred");
     }
 
     setAddSensorData({
@@ -40,8 +47,6 @@ const AddSensor = ({ onClose, onAdd }) => {
       url: "",
       location: "",
     });
-
-    onClose();
   };
 
   return (
@@ -55,7 +60,7 @@ const AddSensor = ({ onClose, onAdd }) => {
               placeholder="Sensor Name"
               name="sensorName"
               onChange={handleSensorChange}
-              value={addsensorData.sensorName}
+              value={addSensorData.sensorName}
               required
             />
           </div>
@@ -66,7 +71,7 @@ const AddSensor = ({ onClose, onAdd }) => {
               placeholder="Type"
               name="type"
               onChange={handleSensorChange}
-              value={addsensorData.type}
+              value={addSensorData.type}
               required
             />
           </div>
@@ -79,7 +84,7 @@ const AddSensor = ({ onClose, onAdd }) => {
               placeholder="IP"
               name="ip"
               onChange={handleSensorChange}
-              value={addsensorData.ip}
+              value={addSensorData.ip}
               required
             />
           </div>
@@ -90,7 +95,7 @@ const AddSensor = ({ onClose, onAdd }) => {
               placeholder="Port"
               name="port"
               onChange={handleSensorChange}
-              value={addsensorData.port}
+              value={addSensorData.port}
               required
             />
           </div>
@@ -104,7 +109,7 @@ const AddSensor = ({ onClose, onAdd }) => {
               placeholder="url"
               name="url"
               onChange={handleSensorChange}
-              value={addsensorData.url}
+              value={addSensorData.url}
               required
             />
           </div>
@@ -115,7 +120,7 @@ const AddSensor = ({ onClose, onAdd }) => {
               placeholder="location"
               name="location"
               onChange={handleSensorChange}
-              value={addsensorData.location}
+              value={addSensorData.location}
               required
             />
           </div>
@@ -128,14 +133,14 @@ const AddSensor = ({ onClose, onAdd }) => {
             placeholder="Unique Id"
             name="uniqueId"
             onChange={handleSensorChange}
-            value={addsensorData.uniqueId}
+            value={addSensorData.uniqueId}
             required
           />
         </div>
         <div className="flex justify-end gap-2">
           <Button text="Cancel" onClick={onClose} />
 
-          <Button type="submit" text="Add" />
+          <Button disabled={isLoading} type="submit" text="Add" />
         </div>
       </div>
     </form>

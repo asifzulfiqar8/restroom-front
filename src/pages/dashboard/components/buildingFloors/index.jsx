@@ -19,6 +19,9 @@ import {
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { IoLocationSharp } from "react-icons/io5";
+import { BsQrCode } from "react-icons/bs";
+import { FaSquare } from "react-icons/fa";
 
 const BuildingFloors = ({ floorType = "All Floors" }) => {
   const id = useParams().id;
@@ -140,7 +143,7 @@ const BuildingFloors = ({ floorType = "All Floors" }) => {
                 <span>Cancel</span>
               </Button>
               <Button
-                className="bg-[#A449EB] text-white"
+                className="bg-primary text-white"
                 onClick={handleSubmitBuilding}
               >
                 <span>Confirm</span>
@@ -152,12 +155,48 @@ const BuildingFloors = ({ floorType = "All Floors" }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div className="piechart p-5 md:col-span-12 xl:col-span-8">
-          <img
-            src={<BiLoader />}
-            alt="Building Model"
-            className="w-full object-cover"
-            style={{ height: "500px" }}
-          />
+          <div className="flex lg:flex-row flex-col gap-4">
+            <div className="flex flex-col justify-between lg:basis-[35%]">
+              <div>
+                <p className="text-[#9A9A9A] text-sm md:text-base font-[400] leading-[22.4px] flex gap-2 items-center">
+                  <span>
+                    <IoLocationSharp className="text-primary" />
+                  </span>
+                  1234 Elm Street, Springfield{" "}
+                </p>
+                <h1 className="font-[600] text-xl md:text-2xl text-primary">
+                  Skyline Heights
+                </h1>
+                <p className="text-[#9A9A9A] text-xs md:sm font-[400] leading-[22.4px]">
+                  Total Floors : 16
+                </p>
+              </div>
+              <div>
+                <h1 className="font-[600] text-base md:text-lg text-secondary">
+                  Queuing Status
+                </h1>
+                <p className="text-xs text-[#030229] font-[400] flex gap-1 items-center">
+                  <FaSquare className="text-[#80D3FF]" />
+                  No
+                </p>
+                <p className="text-xs text-[#030229] font-[400] flex gap-1 items-center">
+                  <FaSquare className="text-[#FFC472]" />
+                  Small Queue
+                </p>
+                <p className="text-xs text-[#030229] font-[400] flex gap-1 items-center">
+                  <FaSquare className="text-[#FE7F7F]" />
+                  Large Queue
+                </p>
+              </div>
+            </div>
+            <img
+              src={<BiLoader />}
+              alt="Building Model"
+              className="w-full object-cover"
+              style={{ height: "500px" }}
+            />
+            <BsQrCode fontSize={35} className="cursor-pointer" />
+          </div>
         </div>
 
         <div className="md:col-span-12 xl:col-span-4">
